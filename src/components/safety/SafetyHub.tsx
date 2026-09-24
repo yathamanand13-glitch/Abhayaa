@@ -7,12 +7,18 @@ import {
   Mic,
   ShieldCheck,
   Sparkles,
+  Info,
+  CheckCircle2,
+  XCircle,
+  CircleDot,
+  Loader2,
 } from 'lucide-react';
 import { AiSafetyAssistant } from '../before/AiSafetyAssistant';
 import { ConversationAnalyzer } from '../before/ConversationAnalyzer';
 import { LinkAnalyzer } from '../before/LinkAnalyzer';
 import { SafeJourneyTracker } from '../before/SafeJourneyTracker';
 import { EmergencyContact, EvidenceItem } from '../../types';
+import { usePermissions } from '../../context/PermissionContext';
 
 interface SafetyHubProps {
   onTriggerSos: (reason?: string) => void;
@@ -27,6 +33,8 @@ export const SafetyHub: React.FC<SafetyHubProps> = ({
   onSaveToEvidence,
   safetyWord,
 }) => {
+  const { permissions, requestMicrophone } = usePermissions();
+  const micState = permissions.microphone.state;
   const [subTab, setSubTab] = useState<'assistant' | 'conversation' | 'link' | 'journey' | 'voice-demo'>('assistant');
   const [voiceSimulated, setVoiceSimulated] = useState(false);
 
@@ -122,7 +130,7 @@ export const SafetyHub: React.FC<SafetyHubProps> = ({
               </p>
             </div>
 
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-2xl space-y-3">
+            <div className="p-4 bg-stone-50 border border-stone-200 rounded-2xl space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <span className="text-xs font-semibold text-stone-700 block">
@@ -132,16 +140,81 @@ export const SafetyHub: React.FC<SafetyHubProps> = ({
                     "{safetyWord}"
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl self-start sm:self-auto">
-                  Listener Status: ACTIVE
-                </span>
+
+                {/* Real Microphone Status Badge */}
+                <div>
+                  {micState === 'granted' ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Microphone Granted ✓</span>
+                    </span>
+                  ) : micState === 'denied' ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-50 text-rose-800 border border-rose-200 text-xs font-bold">
+                      <XCircle className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Microphone Denied</span>
+                    </span>
+                  ) : micState === 'requesting' ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold animate-pulse">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                      <span>Requesting Microphone…</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-stone-200/80 text-stone-800 border border-stone-300 text-xs font-bold">
+                      <CircleDot className="w-3.5 h-3.5 text-stone-500" />
+                      <span>Microphone Not Granted</span>
+                    </span>
+                  )}
+                </div>
               </div>
 
+              {/* Status & Permission Actions */}
+              {micState === 'not-granted' && (
+                <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                  <div className="flex items-start gap-2 text-xs text-amber-900">
+                    <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block font-bold">Microphone permission required for Safety Word detection.</strong>
+                      <span className="text-[11px] text-amber-800">
+                        ABHAYAA requires audio permission to listen for your emergency keyword. Click below to allow.
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => requestMicrophone()}
+                    className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-xs"
+                  >
+                    Allow Microphone
+                  </button>
+                </div>
+              )}
+
+              {micState === 'denied' && (
+                <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl space-y-1">
+                  <div className="flex items-start gap-2 text-xs text-rose-900">
+                    <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block font-bold">Safety Word listener unavailable because microphone permission is denied.</strong>
+                      <span className="text-[11px] text-rose-800">
+                        To enable voice detection, unblock microphone access in your browser site permissions and refresh.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <p className="text-xs text-stone-600 leading-relaxed">
-                When this phrase is spoken in distress, ABHAYAA immediately triggers the full emergency sequence: live location broadcasting, trusted contact alerts, dual-camera evidence recording, and simulated police response.
+                When this phrase is spoken in distress, ABHAYAA triggers the full emergency sequence: live location broadcasting, trusted contact alerts, 30s camera evidence recording, and responder dispatch.
               </p>
 
-              <div className="pt-2">
+              {/* Web Limitation Disclosure & Explicit Prototype Simulator */}
+              <div className="pt-2 border-t border-stone-200/80 space-y-2">
+                <div className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                  <span>Prototype Safety Word Simulation</span>
+                </div>
+                <p className="text-[11px] text-stone-500">
+                  Standard web browsers cannot listen continuously in background while device is locked or tab is minimized. Use this simulation button to test the emergency sequence end-to-end.
+                </p>
+
                 <button
                   onClick={handleSimulateVoice}
                   disabled={voiceSimulated}
@@ -153,15 +226,15 @@ export const SafetyHub: React.FC<SafetyHubProps> = ({
                 >
                   {voiceSimulated
                     ? 'Detecting "ABHAYAA" — Initiating Emergency Dispatch...'
-                    : 'Simulate Spoken Safety Word ("ABHAYAA")'}
+                    : 'Simulate Safety Word Detected ("ABHAYAA")'}
                 </button>
               </div>
             </div>
 
-            <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 space-y-1">
-              <strong className="font-bold">Prototype Demonstration Note:</strong>
-              <p className="text-[11px] leading-relaxed">
-                In browser environments, continuous background microphone listening without active tabs is restricted by browser security policies. Production architecture supports platform-specific background audio service with low-energy hotword wake locks.
+            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-xs text-stone-700 space-y-1">
+              <strong className="font-bold text-stone-900">Native Android Production Architecture:</strong>
+              <p className="text-[11px] leading-relaxed text-stone-600">
+                In the native Android app, ABHAYAA binds to a foreground hotword service using Google Voice Match / offline Porcupine Wake Word engine to wake up hands-free even with the screen off.
               </p>
             </div>
           </div>

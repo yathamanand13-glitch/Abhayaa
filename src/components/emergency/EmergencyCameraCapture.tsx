@@ -93,10 +93,11 @@ export const EmergencyCameraCapture: React.FC<EmergencyCameraCaptureProps> = ({
       }
     } catch (err: any) {
       console.warn('Real camera access error:', err);
-      setPermissionStatus('denied');
+      const isDenied = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
+      setPermissionStatus(isDenied ? 'denied' : 'unsupported');
       setErrorMessage(
-        err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError'
-          ? 'Camera permission denied by user or browser security policy.'
+        isDenied
+          ? 'Camera permission is unavailable. Emergency response will continue without camera evidence.'
           : `Device camera unavailable: ${err.message || 'Hardware in use or missing'}`
       );
       setIsCapturing(false);
@@ -222,7 +223,13 @@ export const EmergencyCameraCapture: React.FC<EmergencyCameraCaptureProps> = ({
             <p className="text-xs text-stone-500">
               {isEvidencePreserved
                 ? t('camera_secure_preserved')
-                : t('camera_capture_active')}
+                : permissionStatus === 'granted' && isCapturing
+                ? t('camera_capture_active')
+                : permissionStatus === 'denied'
+                ? 'Camera permission unavailable — Emergency response continues without video evidence'
+                : permissionStatus === 'unsupported'
+                ? 'Camera hardware unsupported — Emergency response continues without video evidence'
+                : 'Awaiting camera permission…'}
             </p>
           </div>
         </div>

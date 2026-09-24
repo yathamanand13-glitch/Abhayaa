@@ -537,6 +537,29 @@ export const SafetyMapScreen: React.FC<SafetyMapScreenProps> = ({
               <CheckCircle2 className="w-4 h-4 text-emerald-300" />
             </div>
           </div>
+
+          {/* Missing Location Warning During Emergency */}
+          {!userLocation.isReal && (
+            <div className="p-3 bg-black/35 rounded-2xl border border-rose-300/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white text-xs font-bold block">
+                    Location permission is required to share your current location.
+                  </strong>
+                  <span className="text-rose-100 text-[11px]">
+                    Emergency incident recorded and trusted contacts alerted. Enable location to transmit exact live GPS coordinates.
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={requestDeviceLocation}
+                className="px-3.5 py-1.5 bg-white text-rose-800 rounded-xl text-xs font-black self-start sm:self-auto cursor-pointer shadow-xs hover:bg-rose-50 transition-colors"
+              >
+                Allow Location
+              </button>
+            </div>
+          )}
         </div>
       )}
 

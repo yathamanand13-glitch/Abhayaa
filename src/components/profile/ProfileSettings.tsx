@@ -27,6 +27,7 @@ import { useTranslation } from '../../i18n/LanguageContext';
 import { LanguageCode } from '../../i18n/translations';
 import { AiComplaintAssistant } from '../after/AiComplaintAssistant';
 import { RecoverySupportDirectory } from '../after/RecoverySupportDirectory';
+import { DevicePermissionsCard } from './DevicePermissionsCard';
 
 const LanguageSelectorGrid: React.FC = () => {
   const { language, setLanguage, languages } = useTranslation();
@@ -102,12 +103,6 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
   const [newContactRel, setNewContactRel] = useState('Family / Parent');
-
-  // Simulated Permissions states
-  const [locationPerm, setLocationPerm] = useState(true);
-  const [cameraPerm, setCameraPerm] = useState(true);
-  const [micPerm, setMicPerm] = useState(true);
-  const [notifPerm, setNotifPerm] = useState(true);
 
   // Reporting & Assistance toggle
   const [activeAssistTool, setActiveAssistTool] = useState<'none' | 'complaint' | 'directory' | 'resources'>('none');
@@ -384,96 +379,8 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
         </div>
       </div>
 
-      {/* DEVICE PERMISSIONS MANAGER */}
-      <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-xs space-y-4">
-        <div className="flex items-center gap-2.5 border-b border-stone-100 pb-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-            <Lock className="w-4 h-4 text-blue-600" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-stone-900">
-              Device Permissions & Emergency Hardware Access
-            </h3>
-            <p className="text-xs text-stone-500">
-              ABHAYAA requires explicit permissions for automated evidence preservation and emergency dispatch.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <MapPin className="w-4 h-4 text-rose-600" />
-              <div>
-                <strong className="text-stone-900 block">Precise GPS Location</strong>
-                <span className="text-[11px] text-stone-500">For emergency patrol dispatch</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setLocationPerm(!locationPerm)}
-              className={`px-3 py-1 rounded-xl font-bold text-xs cursor-pointer ${
-                locationPerm ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
-              }`}
-            >
-              {locationPerm ? 'Granted ✓' : 'Disabled'}
-            </button>
-          </div>
-
-          <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Camera className="w-4 h-4 text-purple-600" />
-              <div>
-                <strong className="text-stone-900 block">Dual Camera Access</strong>
-                <span className="text-[11px] text-stone-500">30s automated SOS evidence</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setCameraPerm(!cameraPerm)}
-              className={`px-3 py-1 rounded-xl font-bold text-xs cursor-pointer ${
-                cameraPerm ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
-              }`}
-            >
-              {cameraPerm ? 'Granted ✓' : 'Disabled'}
-            </button>
-          </div>
-
-          <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Mic className="w-4 h-4 text-amber-600" />
-              <div>
-                <strong className="text-stone-900 block">Microphone / Audio</strong>
-                <span className="text-[11px] text-stone-500">Safety word hotword listener</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setMicPerm(!micPerm)}
-              className={`px-3 py-1 rounded-xl font-bold text-xs cursor-pointer ${
-                micPerm ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
-              }`}
-            >
-              {micPerm ? 'Granted ✓' : 'Disabled'}
-            </button>
-          </div>
-
-          <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Bell className="w-4 h-4 text-blue-600" />
-              <div>
-                <strong className="text-stone-900 block">Push Notifications</strong>
-                <span className="text-[11px] text-stone-500">Verified safety advisories</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setNotifPerm(!notifPerm)}
-              className={`px-3 py-1 rounded-xl font-bold text-xs cursor-pointer ${
-                notifPerm ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
-              }`}
-            >
-              {notifPerm ? 'Granted ✓' : 'Disabled'}
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* REAL DEVICE PERMISSIONS MANAGER */}
+      <DevicePermissionsCard />
 
       {/* 9. REPORTING & ASSISTANCE */}
       <div className="bg-white rounded-3xl border border-stone-200 shadow-xs p-6 space-y-5">
