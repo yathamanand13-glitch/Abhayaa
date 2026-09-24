@@ -1,0 +1,6 @@
+{
+  "name": "ABHAYAA — Women & Girls Safety System",
+  "description": "AI-enabled integrated women and girls safety and protection system across Before (prevention), During (emergency SOS), and After (reporting & recovery) with discreet application identity.",
+  "requestFramePermissions": ["geolocation", "microphone", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
